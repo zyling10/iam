@@ -23,7 +23,7 @@ import (
 
 var (
 	progressMessage = color.GreenString("==>")
-	//nolint: deadcode,unused,varcheck
+	// nolint: deadcode,unused,varcheck
 	usageTemplate = fmt.Sprintf(`%s{{if .Runnable}}
   %s{{end}}{{if .HasAvailableSubCommands}}
   %s{{end}}{{if gt (len .Aliases) 0}}
@@ -192,6 +192,7 @@ func (a *App) buildCommand() {
 		cmd.SetHelpCommand(helpCommand(a.name))
 	}
 	if a.runFunc != nil {
+		// 方法赋值 app.runCommand
 		cmd.RunE = a.runCommand
 	}
 
@@ -221,6 +222,7 @@ func (a *App) buildCommand() {
 		verflag.AddFlags(namedFlagSets.FlagSet("global"))
 	}
 	if !a.noConfig {
+		// 添加全局配置参数
 		addConfigFlag(a.basename, namedFlagSets.FlagSet("global"))
 	}
 	globalflag.AddGlobalFlags(namedFlagSets.FlagSet("global"), cmd.Name())

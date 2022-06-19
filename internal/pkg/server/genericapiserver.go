@@ -160,7 +160,7 @@ func (s *GenericAPIServer) Run() error {
 		return nil
 	})
 
-	eg.Go(func() error {
+	/*eg.Go(func() error {
 		key, cert := s.SecureServingInfo.CertKey.KeyFile, s.SecureServingInfo.CertKey.CertFile
 		if cert == "" || key == "" || s.SecureServingInfo.BindPort == 0 {
 			return nil
@@ -177,7 +177,7 @@ func (s *GenericAPIServer) Run() error {
 		log.Infof("Server on %s stopped", s.SecureServingInfo.Address())
 
 		return nil
-	})
+	})*/
 
 	// Ping the server to make sure the router is working.
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)

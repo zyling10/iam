@@ -64,9 +64,9 @@ func createAPIServer(cfg *config.Config) (*apiServer, error) {
 		return nil, err
 	}
 	extraServer, err := extraConfig.complete().New()
-	if err != nil {
-		return nil, err
-	}
+	// if err != nil {
+	//	return nil, err
+	// }
 
 	server := &apiServer{
 		gs:               gs,
@@ -99,7 +99,7 @@ func (s *apiServer) PrepareRun() preparedAPIServer {
 }
 
 func (s preparedAPIServer) Run() error {
-	go s.gRPCAPIServer.Run()
+	// go s.gRPCAPIServer.Run()
 
 	// start shutdown managers
 	if err := s.gs.Start(); err != nil {
@@ -124,16 +124,21 @@ func (c *ExtraConfig) complete() *completedExtraConfig {
 
 // New create a grpcAPIServer instance.
 func (c *completedExtraConfig) New() (*grpcAPIServer, error) {
+	storeIns, _ := mysql.GetMySQLFactoryOr(c.mysqlOptions)
+	// storeIns, _ := etcd.GetEtcdFactoryOr(c.etcdOptions, nil)
+	store.SetClient(storeIns)
+
 	creds, err := credentials.NewServerTLSFromFile(c.ServerCert.CertKey.CertFile, c.ServerCert.CertKey.KeyFile)
 	if err != nil {
-		log.Fatalf("Failed to generate credentials %s", err.Error())
+		// log.Fatalf("Failed to generate credentials %s", err.Error())
+		return nil, err
 	}
 	opts := []grpc.ServerOption{grpc.MaxRecvMsgSize(c.MaxMsgSize), grpc.Creds(creds)}
 	grpcServer := grpc.NewServer(opts...)
 
-	storeIns, _ := mysql.GetMySQLFactoryOr(c.mysqlOptions)
+	// storeIns, _ := mysql.GetMySQLFactoryOr(c.mysqlOptions)
 	// storeIns, _ := etcd.GetEtcdFactoryOr(c.etcdOptions, nil)
-	store.SetClient(storeIns)
+	// store.SetClient(storeIns)
 	cacheIns, err := cachev1.GetCacheInsOr(storeIns)
 	if err != nil {
 		log.Fatalf("Failed to get cache instance: %s", err.Error())
@@ -167,7 +172,7 @@ func buildGenericConfig(cfg *config.Config) (genericConfig *genericapiserver.Con
 	return
 }
 
-//nolint: unparam
+// nolint: unparam
 func buildExtraConfig(cfg *config.Config) (*ExtraConfig, error) {
 	return &ExtraConfig{
 		Addr:         fmt.Sprintf("%s:%d", cfg.GRPCOptions.BindAddress, cfg.GRPCOptions.BindPort),
